@@ -1,0 +1,41 @@
+Pytorch:
+Lenet:
+CPU:            GPU:
+91.4 ms         118.18 ms
+0.914 ms        1.18 ms
+
+Alexnet:
+CPU:            GPU:
+24322.085 ms    1419.048 ms
+243.221 ms      14.19 ms
+
+vggnet19:
+CPU:            GPU:
+160078.282 ms   11250.297 ms
+1600.783 ms     112.503 ms
+
+resnet34:
+CPU:            GPU:
+44234.007 ms    3144.444672 ms
+442.34 ms       31.444 ms
+
+Libtorch:
+Lenet:
+CPU:            GPU:
+71 ms           4387 ms
+0.71 ms         43.87 ms
+
+Alexnet:
+CPU:            GPU:
+72444 ms        6738 ms
+724.44 ms       67.38 ms
+
+vggnet19:
+CPU:            GPU:
+355475 ms       16582 ms
+3554.75 ms      165.82 ms
+
+resnet34:
+CPU:            GPU:
+308594 ms       7466 ms
+3085.94 ms      74.66 ms
