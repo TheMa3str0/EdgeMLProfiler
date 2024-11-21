@@ -21,7 +21,7 @@ To get started with EdgeMLProfiler, follow these simple steps:
 
 1. Clone the EdgeMLProfiler repository:
    ```bash
-   git clone https://github.com/your-username/EdgeMLProfiler.git
+   git clone https://github.com/TheMa3str0/EdgeMLProfiler.git
    ```
 
 2. **Navigate to the EdgeMLProfiler directory:**
