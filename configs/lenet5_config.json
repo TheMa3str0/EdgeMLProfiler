@@ -1,0 +1,81 @@
+{
+    "network": {
+        "device": "gpu",
+        "input_shape": [1, 28, 28],
+        "mode": "training",
+
+        "inference_params": {
+            "no_inferences": 100000
+        },
+
+        "training_params": {
+            "optimizer": "adam",
+            "learning_rate": 0.001,
+            "loss_function": "categorical_crossentropy",
+            "batch_size": 64,
+            "epochs": 20,
+            "num_samples": 6400
+        },
+
+        "warmup_params": {
+            "no_operations": 5000
+        },
+
+        "task": "classification",
+        "layers": [
+            {
+                "type": "conv2d",
+                "activation_function": "tanh",
+                "io_shape": [1, 6],
+                "conv_params": {
+                    "kernel_size": [5, 5],
+                    "stride": [1, 1],
+                    "padding": 0
+                }
+            },
+            {
+                "type": "maxpool2d",
+                "maxpool_params": {
+                    "kernel_size": [2, 2],
+                    "stride": [2, 2],
+                    "padding": 0
+                }
+            },
+            {
+                "type": "conv2d",
+                "activation_function": "tanh",
+                "io_shape": [6, 16],
+                "conv_params": {
+                    "kernel_size": [5, 5],
+                    "stride": [1, 1],
+                    "padding": 0
+                }
+            },
+            {
+                "type": "maxpool2d",
+                "maxpool_params": {
+                    "kernel_size": [2, 2],
+                    "stride": [2, 2],
+                    "padding": 0
+                }
+            },
+            {
+                "type": "flatten"
+            },
+            {
+                "type": "dense",
+                "activation_function": "tanh",
+                "io_shape": [256, 120]
+            },
+            {
+                "type": "dense",
+                "activation_function": "tanh",
+                "io_shape": [120, 84]
+            },
+            {
+                "type": "dense",
+                "io_shape": [84, 10]
+            }
+        ]
+    }
+}

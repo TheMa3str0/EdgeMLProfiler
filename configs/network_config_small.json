@@ -1,0 +1,37 @@
+{
+    "network": {
+        "device": "gpu",
+        "input_shape": [6],
+        "mode": "training",
+
+        "inference_params": {
+            "no_inferences": 100000
+        },
+
+        "training_params": {
+            "optimizer": "adam",
+            "learning_rate": 0.001,
+            "loss_function": "categorical_crossentropy",
+            "batch_size": 64,
+            "epochs": 20,
+            "num_samples": 6400
+        },
+
+        "warmup_params": {
+            "no_operations": 50000
+        },
+
+        "task": "classification",
+        "layers": [
+            {
+                "type": "dense",
+                "activation_function": "relu",
+                "io_shape": [6, 30]
+            },
+            {
+                "type": "dense",
+                "io_shape": [30, 13]
+            }
+        ]
+    }
+}
