@@ -36,12 +36,12 @@ std::vector<NetworkLayer>& ConfigParser::getNetworkLayers() {
         layer_info.type = layer["type"];
 
         // Check if "activation_function" exists before extracting it
-        if (layer.contains("activation_function")) {
+        if (layer.find("activation_function") != layer.end()) {
             layer_info.activation_function = layer["activation_function"];
         }
 
         // Check if "io_shape" exists before extracting it
-        if (layer.contains("io_shape")) {
+        if (layer.find("io_shape") != layer.end()) {
             const auto io_shape = layer["io_shape"];
             for (const auto& shape : io_shape) {
                 layer_info.io_shape.push_back(shape);
