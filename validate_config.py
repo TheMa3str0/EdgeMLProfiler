@@ -156,6 +156,20 @@ def check_network_config(network_config):
         if warmup_params['no_operations'] < 0:
             errors.append("'no_operations' value must be a non-negative integer")
 
+    power_measurement = network_config.get('power_measurement')
+    if not power_measurement:
+        errors.append("Missing 'power_measurement' field in the config file.")
+    else:
+        if 'status' not in power_measurement:
+            errors.append("Missing 'status' in 'power_measurement'.")
+        elif power_measurement['status'] not in ['on', 'off']:
+            errors.append("'status' must be either 'on' or 'off'.")
+
+        if 'logging_interval' not in power_measurement:
+            errors.append("Missing 'logging_interval' in the 'power_measurement'.")
+        elif not isinstance(power_measurement['logging_interval'], (float, int)) or power_measurement['logging_interval'] <= 0:
+            errors.append("'logging_interval' must be a positive number.")
+
     # Add more checks for specific keys in the 'network' section
 
     return [error for error in errors if error is not None]
