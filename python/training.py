@@ -30,7 +30,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
         criterion = nn.MSELoss()
     else:
         print('Unsupported loss function:', loss_function)
-        exit()
+        exit(1)
 
     if optimizer_choice == 'adam':
         optimizer = optim.Adam(network.parameters(), lr=learning_rate)
@@ -40,7 +40,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
         optimizer = optim.RMSprop(network.parameters(), lr=learning_rate)
     else:
         print('Unsupported optimizer choice:', optimizer_choice)
-        exit()
+        exit(1)
 
     # Generate mock training data and labels
     train_data, train_labels = generate_mock_training_data(input_shape, num_classes, num_samples, task)
@@ -100,7 +100,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
         end_time = time.perf_counter()
     else:
         print("Error")
-        return 0
+        exit(1)
 
     duration_sec = end_time - start_time
     duration_ns = int(duration_sec * 1_000_000_000)

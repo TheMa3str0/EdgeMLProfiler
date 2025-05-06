@@ -50,4 +50,4 @@ def profile_custom(network, device, input_shape, no_inferences, no_operations_wa
         return duration_ns
     else:
         print("Error")
-        return 0
+        exit(1)

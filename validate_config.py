@@ -245,21 +245,32 @@ def check_layers_config(layers):
 def validate_config(config_file_path):
     config_data = load_config_file(config_file_path)
 
-    if config_data is not None:
-        network_errors = check_network_config(config_data['network'])
-        layers = config_data['network']['layers']
-        layers_errors = check_layers_config(layers)
+    if config_data is None:
+        return False, None
 
-        all_errors = network_errors + layers_errors
+    if 'network' not in config_data:
+        print("Configuration Errors:\nMissing 'network' section in the configuration.")
+        return False, None
 
-        if all_errors:
-            print("Configuration Errors:")
-            for error in all_errors:
-                print(error)
-            return False
-        else:
-            print("Config file is valid.")
-            return True
+    network_config = config_data['network']
+    network_errors = check_network_config(network_config)
+
+    if 'layers' not in network_config:
+        network_errors.append("Missing 'layers' section in the 'network' configuration.")
+        if not network_errors:
+            print("Configuration Errors:\n" + network_errors[0])
+            return False, None 
+    
+    layers_errors = []
+    layers = network_config['layers']
+    layers_errors = check_layers_config(layers)
+    all_errors = network_errors + layers_errors
+
+    if all_errors:
+        print("Configuration Errors:")
+        for error in all_errors:
+            print(f"- {error}")
+        return False, None
     else:
-        print("Error loading config file.")
-        return False
+        print("Config file is valid.")
+        return True, config_data
