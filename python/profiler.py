@@ -23,15 +23,16 @@ warmup_params = get_warmup_params(config_data)
 
 if config_data['network']['mode'] == 'inference':
     inference_params = get_inference_params(config_data)
-    inference_time = inference.profile_custom(network, device, *inference_params, *warmup_params)
-    
+    inference_time, start_time, end_time = inference.profile_custom(network, device, *inference_params, *warmup_params)
     total_time = inference_time * pow(10, -6)
+    print(f"[START TIME] {start_time} - [END TIME] {end_time}")
     print(f"Ran {config_data['network']['inference_params']['no_inferences']} inferences in {total_time} ms.")
     print(f"Time spent per inference: {str(total_time / config_data['network']['inference_params']['no_inferences'])} ms on average.")
 elif config_data['network']['mode'] == 'training':
     training_params = get_training_params(config_data)
-    training_time = training.train_network(network, device, *training_params, *warmup_params)
+    training_time, start_time, end_time = training.train_network(network, device, *training_params, *warmup_params)
     total_time = training_time * pow(10, -6)
+    print(f"[START TIME] {start_time} - [END TIME] {end_time}")
     print(f"Trained for {config_data['network']['training_params']['epochs']} epochs in {total_time} ms.")
     print(f"Time spent per epoch: {total_time / config_data['network']['training_params']['epochs']} ms on average.")
 else:

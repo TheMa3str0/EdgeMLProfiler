@@ -1,7 +1,7 @@
 import time
 import psutil
-import threading # Import threading
-from jtop import jtop # Make sure jtop is installed
+import threading
+from jtop import jtop
 
 # Modify log_power to accept the stop event
 def log_power(pid, stop_event, log_file="power_log.txt", interval=0.5):
@@ -36,7 +36,7 @@ def log_power(pid, stop_event, log_file="power_log.txt", interval=0.5):
                 if jetson.ok():
                     stats = jetson.stats
                     power = stats.get('Power TOT', 0)
-                    timestamp = int(time.time() * 1000)
+                    timestamp = int(time.time() * 1e9)
                     f.write(f"{timestamp},{power}\n")
                     # Optionally flush buffer periodically if real-time view is needed
                     # f.flush()

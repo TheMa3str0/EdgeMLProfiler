@@ -35,7 +35,9 @@ private:
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-        printMetrics(duration);
+        long long start_seconds = long(std::chrono::duration<double>(start.time_since_epoch()).count() * pow(10, 9));
+        long long end_seconds = long(std::chrono::duration<double>(end.time_since_epoch()).count() * pow(10, 9));
+        printMetrics(duration, start_seconds, end_seconds);
     }
 
     void profileOnGPU(std::vector<torch::Tensor>& inputs) {
@@ -55,10 +57,13 @@ private:
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-        printMetrics(duration);
+        long long start_seconds = long(std::chrono::duration<double>(start.time_since_epoch()).count() * pow(10, 9));
+        long long end_seconds = long(std::chrono::duration<double>(end.time_since_epoch()).count() * pow(10, 9));
+        printMetrics(duration, start_seconds, end_seconds);
     }
 
-    void printMetrics(long long duration) {
+    void printMetrics(long long duration, long long start_time, long long end_time) {
+        std::cout << "[START TIME] " << start_time << " - [END TIME]" << end_time << "\n";
         std::cout << "Ran " << no_inferences_ << " inferences in " << duration << " ms.\n";
         std::cout << "Time spent per inference: " << static_cast<double>(duration) / no_inferences_ << " ms on average.\n"; //Maybe set precision here?
     }

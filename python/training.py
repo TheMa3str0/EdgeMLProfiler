@@ -62,7 +62,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
                     outputs = network(inputs)
         
         print("Training on CPU...")
-        start_time = time.perf_counter()
+        start_time = time.time()
         for epoch in range(epochs):
             running_loss = 0.0
             for i, data in enumerate(train_loader, 0):
@@ -73,7 +73,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
-        end_time = time.perf_counter()
+        end_time = time.time()
     elif device == 'gpu':
         network.to('cuda')
         if (no_operations_warmup > 0):
@@ -85,7 +85,7 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
         
         print("Training on GPU...")
         torch.cuda.synchronize()
-        start_time = time.perf_counter()
+        start_time = time.time()
         for epoch in range(epochs):    
             running_loss = 0.0
             for i, data in enumerate(train_loader, 0):
@@ -97,12 +97,12 @@ def train_network(network, device, optimizer_choice, learning_rate, loss_functio
                 optimizer.step()
                 running_loss += loss.item() 
         torch.cuda.synchronize()
-        end_time = time.perf_counter()
+        end_time = time.time()
     else:
         print("Error")
         exit(1)
 
     duration_sec = end_time - start_time
     duration_ns = int(duration_sec * 1_000_000_000)
-    return duration_ns
+    return duration_ns, int(start_time * 1e9), int(end_time * 1e9)
 

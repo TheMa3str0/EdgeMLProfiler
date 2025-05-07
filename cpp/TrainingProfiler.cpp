@@ -59,6 +59,8 @@ public:
         network_->train();
 
         long long training_duration = 0;
+        long long start_seconds = 0;
+        long long end_seconds = 0;
         if (device_ == "cpu") {
             std::cout << "Training on CPU..." << std::endl;
             network_->to(torch::kCPU);
@@ -83,6 +85,9 @@ public:
                     optimizer->step();
                 }
             auto training_end = std::chrono::high_resolution_clock::now();
+
+            long long start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
+            long long end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
             training_duration = std::chrono::duration_cast<std::chrono::milliseconds>(training_end - training_start).count(); 
             }
         } else if (device_ == "gpu") {
@@ -111,6 +116,9 @@ public:
                 }
                 torch::cuda::synchronize();
                 auto training_end = std::chrono::high_resolution_clock::now();
+
+                long long start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
+                long long end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
                 training_duration = std::chrono::duration_cast<std::chrono::milliseconds>(training_end - training_start).count(); 
             }
         } else {
@@ -118,11 +126,12 @@ public:
             return;
         }
 
-        printMetrics(training_duration);
+        printMetrics(training_duration, start_seconds, end_seconds);
     }
 
 private:
-    void printMetrics(long long duration) {
+    void printMetrics(long long duration, long long start_time, long long end_time) {
+        std::cout << "[START TIME] " << start_time << " - [END TIME]" << end_time;
         std::cout << "Trained for " << epochs_ << " epochs in "
                   << duration << " ms.\n";
         std::cout << "Time spent per epoch: " << static_cast<double>(duration) / epochs_

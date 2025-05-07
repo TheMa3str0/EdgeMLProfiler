@@ -20,13 +20,13 @@ def profile_custom(network, device, input_shape, no_inferences, no_operations_wa
                 output = network(random.choice(inputs))
         
         print("Running inferences on CPU...")
-        start_time = time.perf_counter()
+        start_time = time.time()
         for input in inputs:
             output = network(input)
-        end_time = time.perf_counter()
+        end_time = time.time()
         duration_sec = end_time - start_time
         duration_ns = int(duration_sec * 1_000_000_000) # 1e9
-        return duration_ns
+        return duration_ns, int(start_time * 1e9), int(end_time * 1e9)
     elif device == 'gpu':
         device = torch.device('cuda')  # Select the CUDA device
         net = network.to(device)  # Move the network to GPU
@@ -40,14 +40,14 @@ def profile_custom(network, device, input_shape, no_inferences, no_operations_wa
         
         print("Running inferences on GPU...")
         torch.cuda.synchronize()
-        start_time = time.perf_counter()
+        start_time = time.time()
         for input in inputs:
             output = net(input)
         torch.cuda.synchronize()
-        end_time = time.perf_counter()
+        end_time = time.time()
         duration_sec = end_time - start_time
         duration_ns = int(duration_sec * 1_000_000_000) # 1e9
-        return duration_ns
+        return duration_ns, int(start_time * 1e9), int(end_time * 1e9)
     else:
         print("Error")
         exit(1)
