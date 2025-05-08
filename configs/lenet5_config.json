@@ -2,10 +2,15 @@
     "network": {
         "device": "gpu",
         "input_shape": [1, 28, 28],
-        "mode": "training",
+        "mode": "inference",
+
+        "power_measurement": {
+            "status": "on",
+            "logging_interval": 0.5
+        },
 
         "inference_params": {
-            "no_inferences": 100000
+            "no_inferences": 10000
         },
 
         "training_params": {

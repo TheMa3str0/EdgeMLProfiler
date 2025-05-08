@@ -4,6 +4,11 @@
         "input_shape": [3, 80, 80],
         "mode": "inference",
 
+        "power_measurement": {
+            "status": "on",
+            "logging_interval": 0.5
+        },
+
         "inference_params": {
             "no_inferences": 1000
         },
