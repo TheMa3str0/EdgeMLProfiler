@@ -1,5 +1,6 @@
 import subprocess
 import threading
+import re
 
 def run_profiler_task(
     profiler_name,
@@ -20,6 +21,9 @@ def run_profiler_task(
     log_thread = None
     stop_logging_event = None
     profiler_return_code = -1
+    
+    captured_start_time = None
+    captured_end_time = None
 
     try:
         proc = subprocess.Popen(
@@ -47,9 +51,31 @@ def run_profiler_task(
         profiler_return_code = proc.returncode
 
         print(f"\n--- {profiler_name} Profiler Output ---")
+        
+        time_pattern = re.compile(r"\[START TIME\]\s+(\d+)\s+-\s+\[END TIME\]\s+(\d+)")
+        
+        processed_stdout_lines = []
         if stdout_bytes:
-            stdout_str = stdout_bytes.decode('utf-8', errors='replace').strip()
-            print(stdout_str)
+            stdout_str_full = stdout_bytes.decode('utf-8', errors='replace')
+            
+            for line in stdout_str_full.splitlines():
+                match = time_pattern.search(line)
+                if match:
+                    if captured_start_time is None:
+                        try:
+                            captured_start_time = int(match.group(1))
+                            captured_end_time = int(match.group(2))
+                            #print(f"Captured times for {profiler_name}: Start={captured_start_time}, End={captured_end_time}")
+                        except ValueError:
+                            print(f"Warning: Could not parse numbers from time line: {line}")
+                            processed_stdout_lines.append(line)
+                else:
+                    processed_stdout_lines.append(line)
+            
+            final_stdout_to_print = "\n".join(processed_stdout_lines).strip()
+            if final_stdout_to_print:
+                print(final_stdout_to_print)
+        
         if stderr_bytes:
             stderr_str = stderr_bytes.decode('utf-8', errors='replace').strip()
             if stderr_str:
@@ -57,9 +83,9 @@ def run_profiler_task(
                 print(stderr_str)
                 print("-" * (len(f"--- {profiler_name} Profiler Error Output ---") -1))
 
-        print(f"\n{profiler_name} profiler (PID: {proc.pid}) finished with return code: {profiler_return_code}")
-        if profiler_return_code != 0 and profiler_name.startswith("C++"):
-            print(f"Warning: {profiler_name} profiler exited with non-zero status {profiler_return_code}")
+        #print(f"\n{profiler_name} profiler (PID: {proc.pid}) finished with return code: {profiler_return_code}")
+        #if profiler_return_code != 0 and profiler_name.startswith("C++"):
+        #    print(f"Warning: {profiler_name} profiler exited with non-zero status {profiler_return_code}")
 
 
         if power_logging_enabled and log_thread is not None:
@@ -74,18 +100,18 @@ def run_profiler_task(
         elif power_logging_enabled and log_thread is None:
             print(f"Warning: {profiler_name} power logging was flagged as enabled, but the logging thread was not initialized.")
         
-        return profiler_return_code
+        return profiler_return_code, captured_start_time, captured_end_time
 
     except FileNotFoundError:
         exec_name = executable_path_args[0] if executable_path_args else "Unknown Executable"
         print(f"Error: {profiler_name} profiler executable not found at '{exec_name}' (related to config: {config_path_for_error_msg})")
         print(f"Skipping {profiler_name} profiling.")
-        return -1
+        return -1, None, None
     except Exception as e:
         print(f"An unexpected error occurred while running the {profiler_name} profiler: {e}")
         print(f"Skipping {profiler_name} profiling.")
         if proc and proc.poll() is not None:
             profiler_return_code = proc.returncode
-        return profiler_return_code
+        return profiler_return_code, captured_start_time, captured_end_time
     finally:
         print(f"\nMain program execution for {profiler_name} profiler finished.")

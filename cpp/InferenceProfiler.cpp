@@ -63,7 +63,7 @@ private:
     }
 
     void printMetrics(long long duration, long long start_time, long long end_time) {
-        std::cout << "[START TIME] " << start_time << " - [END TIME]" << end_time << "\n";
+        std::cout << "[START TIME] " << start_time << " - [END TIME] " << end_time << "\n";
         std::cout << "Ran " << no_inferences_ << " inferences in " << duration << " ms.\n";
         std::cout << "Time spent per inference: " << static_cast<double>(duration) / no_inferences_ << " ms on average.\n"; //Maybe set precision here?
     }

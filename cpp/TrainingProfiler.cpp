@@ -131,7 +131,7 @@ public:
 
 private:
     void printMetrics(long long duration, long long start_time, long long end_time) {
-        std::cout << "[START TIME] " << start_time << " - [END TIME]" << end_time;
+        std::cout << "[START TIME] " << start_time << " - [END TIME] " << end_time;
         std::cout << "Trained for " << epochs_ << " epochs in "
                   << duration << " ms.\n";
         std::cout << "Time spent per epoch: " << static_cast<double>(duration) / epochs_
