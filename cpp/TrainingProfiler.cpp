@@ -86,8 +86,8 @@ public:
                 }
             auto training_end = std::chrono::high_resolution_clock::now();
 
-            long long start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
-            long long end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
+            start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
+            end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
             training_duration = std::chrono::duration_cast<std::chrono::milliseconds>(training_end - training_start).count(); 
             }
         } else if (device_ == "gpu") {
@@ -117,8 +117,8 @@ public:
                 torch::cuda::synchronize();
                 auto training_end = std::chrono::high_resolution_clock::now();
 
-                long long start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
-                long long end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
+                start_seconds = long(std::chrono::duration<double>(training_start.time_since_epoch()).count() * pow(10, 9));
+                end_seconds = long(std::chrono::duration<double>(training_end.time_since_epoch()).count() * pow(10, 9));
                 training_duration = std::chrono::duration_cast<std::chrono::milliseconds>(training_end - training_start).count(); 
             }
         } else {

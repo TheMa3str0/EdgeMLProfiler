@@ -18,7 +18,7 @@ def log_power(pid, stop_event, log_file="power_log.txt", interval=0.5):
     print(f"Logger thread started for PID {pid}. Logging to {log_file}")
     try:
         with jtop() as jetson, open(log_file, "w") as f:
-            f.write("timestamp_ms,power_tot_mw\n")
+            f.write("timestamp_ns,power_tot_mw\n")
 
             while not stop_event.is_set():
                 if not psutil.pid_exists(pid):
