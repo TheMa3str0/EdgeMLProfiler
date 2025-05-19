@@ -1,13 +1,13 @@
 import argparse
-import os # Added for path operations and directory creation
-from datetime import datetime # Added for timestamp generation
+import os
+from datetime import datetime
 from validate_config import validate_config
 from logger import log_power
 from profiler_runner import run_profiler_task
-from power_analyzer import load_power_log, analyze_power_consumption
+# Updated import:
+from power_analyzer import load_power_log, analyze_power_consumption, trim_power_log_file
 
-# In your main.py file:
-
+# print_power_analysis_summary function (as defined in previous step) remains here...
 def print_power_analysis_summary(analysis_results, profiler_name):
     print(f"\n--- Power Analysis Summary for {profiler_name} ---")
 
@@ -35,6 +35,7 @@ def print_power_analysis_summary(analysis_results, profiler_name):
 
     print("-" * (len(f"--- Power Analysis Summary for {profiler_name} ---") -1))
 
+
 def main():
     parser = argparse.ArgumentParser(description='Lightframe: ML Framework Speed Comparison Tool')
     parser.add_argument('--config', type=str, default='./configs/network_config.json',
@@ -52,10 +53,17 @@ def main():
     logs_dir = './logs'
     os.makedirs(logs_dir, exist_ok=True)
 
-
     config_file_name_base = os.path.splitext(os.path.basename(config_path))[0]
-    mode = config_data['network']['mode']
-    device = config_data['network']['device']
+    try:
+        mode = config_data['network']['mode']
+    except KeyError:
+        mode = "unknown_mode"
+        print("Warning: 'mode' not found in config network settings. Using 'unknown_mode' for log name.")
+    try:
+        device = config_data['network']['device']
+    except KeyError:
+        device = "unknown_device"
+        print("Warning: 'device' not found in config network settings. Using 'unknown_device' for log name.")
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 
@@ -93,20 +101,24 @@ def main():
     )
 
     if power_logging_enabled and py_start_time is not None and py_end_time is not None:
-        print(f"\nAttempting power analysis for Python (PyTorch)...")
-        py_power_data = load_power_log(python_power_log_path)
-        if py_power_data:
-            py_analysis_results = analyze_power_consumption(
-                power_data=py_power_data,
-                config_data=config_data,
-                start_time_ns=py_start_time,
-                end_time_ns=py_end_time
-            )
-            print_power_analysis_summary(py_analysis_results, "Python (PyTorch)")
-        else:
-            print(f"Could not load or empty power log for Python (PyTorch) from '{python_power_log_path}'. Skipping power analysis.")
+        # TRIM the log file before loading for analysis
+        print(f"\nTrimming power log '{python_power_log_path}' for Python (PyTorch) interval...")
+        trim_power_log_file(python_power_log_path, py_start_time, py_end_time)
+
+        print(f"Attempting power analysis for Python (PyTorch)...")
+        py_power_data = load_power_log(python_power_log_path) # Now loads the trimmed file
+        # analyze_power_consumption will use py_start_time and py_end_time for duration,
+        # and py_power_data (which is already trimmed) for power metrics.
+        py_analysis_results = analyze_power_consumption(
+            power_data=py_power_data,
+            config_data=config_data,
+            start_time_ns=py_start_time,
+            end_time_ns=py_end_time
+        )
+        print_power_analysis_summary(py_analysis_results, "Python (PyTorch)")
     elif power_logging_enabled:
-        print("\nSkipping Python (PyTorch) power analysis: Start/end times not captured, or power log was not created/is empty.")
+        print("\nSkipping Python (PyTorch) power analysis and log trimming: Profiler start/end times not captured, or power logging was initially off.")
+
 
     # --- C++ Profiler ---
     print("\n" + "="*60)
@@ -126,20 +138,21 @@ def main():
     )
 
     if power_logging_enabled and cpp_start_time is not None and cpp_end_time is not None:
-        print(f"\nAttempting power analysis for C++ (LibTorch)...")
-        cpp_power_data = load_power_log(cpp_power_log_path)
-        if cpp_power_data:
-            cpp_analysis_results = analyze_power_consumption(
-                power_data=cpp_power_data,
-                config_data=config_data,
-                start_time_ns=cpp_start_time,
-                end_time_ns=cpp_end_time
-            )
-            print_power_analysis_summary(cpp_analysis_results, "C++ (LibTorch)")
-        else:
-            print(f"Could not load or empty power log for C++ (LibTorch) from '{cpp_power_log_path}'. Skipping power analysis.")
+        # TRIM the log file before loading for analysis
+        print(f"\nTrimming power log '{cpp_power_log_path}' for C++ (LibTorch) interval...")
+        trim_power_log_file(cpp_power_log_path, cpp_start_time, cpp_end_time)
+
+        print(f"Attempting power analysis for C++ (LibTorch)...")
+        cpp_power_data = load_power_log(cpp_power_log_path) # Now loads the trimmed file
+        cpp_analysis_results = analyze_power_consumption(
+            power_data=cpp_power_data,
+            config_data=config_data,
+            start_time_ns=cpp_start_time,
+            end_time_ns=cpp_end_time
+        )
+        print_power_analysis_summary(cpp_analysis_results, "C++ (LibTorch)")
     elif power_logging_enabled:
-        print("\nSkipping C++ (LibTorch) power analysis: Start/end times not captured, or power log was not created/is empty.")
+        print("\nSkipping C++ (LibTorch) power analysis and log trimming: Profiler start/end times not captured, or power logging was initially off.")
 
     print("\nAll profiling tasks complete.")
 
