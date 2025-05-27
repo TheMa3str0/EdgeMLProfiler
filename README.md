@@ -2,7 +2,7 @@
 
 ## Overview
 
-**EdgeMLProfiler** is a user-friendly and lightweight tool designed for efficiently comparing inference and training speeds across different machine learning frameworks. Currently supporting LibTorch and PyTorch, EdgeMLProfiler provides a straightforward way to assess the performance of these frameworks.
+**EdgeMLProfiler** is a user-friendly and lightweight tool designed for efficiently comparing inference and training speeds as well as power consumption across different machine learning frameworks. Currently supporting LibTorch and PyTorch, EdgeMLProfiler provides a straightforward way to assess the performance of these frameworks.
 
 ## Getting Started
 
@@ -11,9 +11,10 @@
 Before using EdgeMLProfiler, ensure you have the following prerequisites installed:
 
 - [PyTorch](https://pytorch.org/get-started/locally/) and [LibTorch](https://pytorch.org/get-started/locally/)
-- [CMake](https://cmake.org/) (version 3.14 or higher)
+- [CMake](https://cmake.org/) (version 3.10 or higher)
 - [CUDA](https://developer.nvidia.com/cuda-downloads) (for GPU acceleration)
 - [nlohmann/json.hpp](https://github.com/nlohmann/json) (JSON library)
+- [jetson-stats](https://github.com/rbonghi/jetson_stats) (for power monitoring) 
 
 ### Installation
 
@@ -86,15 +87,19 @@ The configuration file contains essential details about the network architecture
    - Options: `'classification'`, `'regression'`
    - Description: Define the task type for the network.
 
-5. **`inference_params` (dictionary, required for `'inference'` mode):**
+5. **`power_measurement` (dictionary, required for both `'inference'` and `'training'` modes):**
+   - Example: `{ 'status': 'on', 'logging_interval': 1 }`
+   - Description: Specifies whether power measurement is enabled (`'status'`) and sets the interval in seconds for logging power data (`'logging_interval'`).
+
+6. **`inference_params` (dictionary, required for `'inference'` mode):**
    - Example: `{ 'no_inferences': 5000 }`
    - Description: Additional parameters required for inference mode. Must include the number of inferences (`'no_inferences'`).
 
-6. **`training_params` (dictionary, required for `'training'` mode):**
+7. **`training_params` (dictionary, required for `'training'` mode):**
    - Example: `{ 'optimizer': 'adam', 'learning_rate': 0.001, 'loss_function': 'categorical_crossentropy', 'batch_size': 32, 'epochs': 10, 'num_samples': 1000 }`
    - Description: Additional parameters required for training mode, including optimizer type, learning rate, loss function, batch size, number of epochs, and number of training samples.
 
-7. **`warmup_params` (dictionary, required for warmup before profiling):**
+8. **`warmup_params` (dictionary, required for warmup before profiling):**
    - Example: `{ 'no_operations': 500 }`
    - Description: Specify number of operations for warmup.
 
@@ -143,4 +148,4 @@ Explore examples like alexnet, vggnet19, and resnet34 in the configs/ folder to 
 ## Publication
 TODO
 
-Enjoy using EdgeMLProfiler for efficient ML framework speed comparisons!
+Enjoy using EdgeMLProfiler for efficient ML framework speed and power comparisons!
