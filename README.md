@@ -146,6 +146,6 @@ The configuration file contains essential details about the network architecture
 Explore examples like alexnet, vggnet19, and resnet34 in the configs/ folder to jumpstart your custom setups.
 
 ## Publication
-TODO
+[An Open-Source Tool for Analyzing the Time Efficiency of Machine Learning on Edge Devices](https://ieeexplore.ieee.org/abstract/document/10815819)
 
 Enjoy using EdgeMLProfiler for efficient ML framework speed and power comparisons!
